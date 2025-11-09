@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediction Results - CryptoPulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;900&family=Open+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dark-mode.css" />
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="nav-brand">
+          <a href="dashboard.html" class="logo-link">
+            <h1 class="logo">CryptoPulse</h1>
+            <span class="tagline">tracks the heartbeat of the market</span>
+          </a>
+        </div>
+        <nav class="nav-menu">
+          <a href="dashboard.html" class="nav-link">New Prediction</a>
+          <span class="user-welcome" id="userWelcome">Welcome, User!</span>
+          <button
+            class="theme-toggle"
+            id="themeToggle"
+            aria-label="Toggle theme"
+          >
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="logout-btn" id="logoutBtn">Logout</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main output-main">
+      <div class="container">
+        <div class="output-header">
+          <h2 class="output-title" id="predictionTitle">Prediction Results</h2>
+          <p class="output-subtitle" id="predictionSubtitle">
+            AI-powered cryptocurrency price forecast
+          </p>
+        </div>
+
+        <div
+          class="prediction-results"
+          id="predictionResults"
+          style="display: none"
+        >
+          <div class="results-grid">
+            <!-- Prediction Card -->
+            <div class="prediction-card">
+              <div class="card-header">
+                <div class="coin-info">
+                  <div class="coin-icon" id="coinIcon"></div>
+                  <div class="coin-details">
+                    <span class="coin-name" id="coinName"></span>
+                    <span class="coin-symbol" id="coinSymbol"></span>
+                  </div>
+                </div>
+                <div class="prediction-timeframe" id="timeframe"></div>
+              </div>
+
+              <div class="prediction-data">
+                <div class="data-row">
+                  <span class="data-label">Current Price:</span>
+                  <span
+                    class="data-value current-price"
+                    id="currentPrice"
+                  ></span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Predicted Price:</span>
+                  <span
+                    class="data-value predicted-price"
+                    id="predictedPrice"
+                  ></span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">High:</span>
+                  <span class="data-value high-price" id="highPrice"></span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Low:</span>
+                  <span class="data-value low-price" id="lowPrice"></span>
+                </div>
+                <div class="data-row direction-row">
+                  <span class="data-label">Direction:</span>
+                  <span class="data-value direction" id="direction"></span>
+                </div>
+              </div>
+
+              <div class="confidence-meter">
+                <div class="confidence-label">Prediction Confidence</div>
+                <div class="confidence-bar">
+                  <div class="confidence-fill" id="confidenceFill"></div>
+                </div>
+                <div class="confidence-percentage" id="confidencePercentage">
+                  0%
+                </div>
+              </div>
+            </div>
+
+            <!-- Chart Card -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title">Price Trend Forecast</h3>
+                <div class="chart-legend">
+                  <div class="legend-item">
+                    <div class="legend-color current"></div>
+                    <span>Current Price</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-color predicted"></div>
+                    <span>Predicted Trend</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-color range"></div>
+                    <span>Price Range</span>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="predictionChart" width="600" height="300"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <a href="dashboard.html" class="btn btn-primary">New Prediction</a>
+            <button class="btn btn-secondary" id="shareBtn">
+              Share Results
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      let lastPrediction = null;
+
+      // ✅ Update theme icon
+      function updateThemeIcon() {
+        const icon = document.querySelector("#themeToggle .theme-icon");
+        if (document.body.classList.contains("dark-theme")) {
+          icon.textContent = "🌙";
+        } else {
+          icon.textContent = "☀️";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        // ✅ Load saved theme
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "light") {
+          document.body.classList.add("light-theme");
+        } else {
+          document.body.classList.add("dark-theme"); // default
+        }
+        updateThemeIcon();
+
+        try {
+          // Fetch user
+          const userRes = await fetch("http://127.0.0.1:5000/user", {
+            credentials: "include",
+          });
+          if (!userRes.ok) throw new Error("Not logged in");
+          const user = await userRes.json();
+          document.getElementById(
+            "userWelcome"
+          ).textContent = `Welcome, ${user.fullName}!`;
+
+          // Fetch latest prediction
+          const res = await fetch(
+            "http://127.0.0.1:5000/get-latest-prediction",
+            { credentials: "include" }
+          );
+          if (!res.ok) throw new Error("Failed to fetch prediction");
+          const prediction = await res.json();
+
+          if (!prediction || !prediction.coin) {
+            alert("No prediction found");
+            window.location.href = "dashboard.html";
+            return;
+          }
+
+          const cryptoData = {
+            BTC: { name: "Bitcoin", icon: "₿" },
+            ETH: { name: "Ethereum", icon: "Ξ" },
+            BNB: { name: "Binance Coin", icon: "◆" },
+            DOGE: { name: "Dogecoin", icon: "Ð" },
+            DOT: { name: "Polkadot", icon: "●" },
+            SOL: { name: "Solana", icon: "◉" },
+            XRP: { name: "Ripple", icon: "✕" },
+            TRX: { name: "Tron", icon: "▲" },
+          };
+          const crypto = cryptoData[prediction.coin];
+          // Reveal results section only after we have data
+          document.getElementById("predictionResults").style.display = "block";
+
+          document.getElementById(
+            "predictionTitle"
+          ).textContent = `Predicted ${crypto.name} price after ${prediction.days} days ${prediction.hours} hours`;
+          document.getElementById("coinIcon").textContent = crypto.icon;
+          document.getElementById("coinName").textContent = crypto.name;
+          document.getElementById("coinSymbol").textContent = prediction.coin;
+          document.getElementById(
+            "timeframe"
+          ).textContent = `${prediction.days} days ${prediction.hours} hours`;
+
+          // USD → INR
+          async function getUsdInrRate() {
+            try {
+              const fxRes = await fetch(
+                "https://open.er-api.com/v6/latest/USD"
+              );
+              const fxJson = await fxRes.json();
+              const rate = fxJson?.rates?.INR;
+              return typeof rate === "number" && isFinite(rate) ? rate : 83.0;
+            } catch (_) {
+              return 83.0;
+            }
+          }
+
+          function formatINR(amount) {
+            return `₹${Number(amount).toLocaleString("en-IN", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`;
+          }
+
+          const usdToInr = await getUsdInrRate();
+          const currentINR = prediction.current * usdToInr;
+          const predictedINR = prediction.predicted * usdToInr;
+          const highINR = prediction.high * usdToInr;
+          const lowINR = prediction.low * usdToInr;
+
+          document.getElementById("currentPrice").textContent =
+            formatINR(currentINR);
+          document.getElementById("predictedPrice").textContent =
+            formatINR(predictedINR);
+          document.getElementById("highPrice").textContent = formatINR(highINR);
+          document.getElementById("lowPrice").textContent = formatINR(lowINR);
+
+          const directionEl = document.getElementById("direction");
+          directionEl.textContent = prediction.direction;
+          directionEl.className = `data-value direction ${prediction.direction.toLowerCase()}`;
+
+          document.getElementById(
+            "confidenceFill"
+          ).style.width = `${prediction.confidence}%`;
+          document.getElementById(
+            "confidencePercentage"
+          ).textContent = `${prediction.confidence}%`;
+
+          // Convert series to INR if available
+          const seriesINR = Array.isArray(prediction.predicted_series)
+            ? prediction.predicted_series.map((v) => v * usdToInr)
+            : null;
+
+          drawPredictionChart({
+            ...prediction,
+            current: currentINR,
+            predicted: predictedINR,
+            high: highINR,
+            low: lowINR,
+            predicted_series: seriesINR,
+          });
+        } catch (err) {
+          console.error(err);
+          alert(err.message || "Failed to load prediction");
+          window.location.href = "dashboard.html";
+        }
+
+        // Logout
+        document
+          .getElementById("logoutBtn")
+          ?.addEventListener("click", async () => {
+            await fetch("http://127.0.0.1:5000/logout", {
+              method: "POST",
+              credentials: "include",
+            });
+            window.location.href = "index.html";
+          });
+
+        // Share
+        document.getElementById("shareBtn")?.addEventListener("click", () => {
+          const shareText = `CryptoPulse Prediction: ${
+            document.getElementById("coinName").textContent
+          } (${document.getElementById("coinSymbol").textContent}) - Current: ${
+            document.getElementById("currentPrice").textContent
+          }, Predicted: ${
+            document.getElementById("predictedPrice").textContent
+          } (${document.getElementById("direction").textContent}) after ${
+            document.getElementById("timeframe").textContent
+          }. Confidence: ${
+            document.getElementById("confidencePercentage").textContent
+          } (Prices in INR)`;
+          if (navigator.share) {
+            navigator.share({
+              title: "CryptoPulse Prediction",
+              text: shareText,
+              url: window.location.href,
+            });
+          } else {
+            navigator.clipboard
+              .writeText(shareText)
+              .then(() => alert("Prediction copied!"))
+              .catch(() => alert("Failed to copy"));
+          }
+        });
+
+        // ✅ Theme toggle
+        document
+          .getElementById("themeToggle")
+          ?.addEventListener("click", () => {
+            document.body.classList.toggle("dark-theme");
+            document.body.classList.toggle("light-theme");
+            localStorage.setItem(
+              "theme",
+              document.body.classList.contains("dark-theme") ? "dark" : "light"
+            );
+            updateThemeIcon();
+            setTimeout(() => {
+              if (lastPrediction) drawPredictionChart(lastPrediction);
+            }, 100);
+          });
+      });
+
+      // Chart function
+      function drawPredictionChart(prediction) {
+        lastPrediction = prediction;
+        const canvas = document.getElementById("predictionChart");
+        const ctx = canvas.getContext("2d");
+        const isDark = document.body.classList.contains("dark-theme");
+        const gridColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
+        const axisTickColor = isDark ? "#fff" : "#000";
+
+        // Gradients
+        const gradientPred = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradientPred.addColorStop(0, "rgba(9,132,227,0.35)");
+        gradientPred.addColorStop(1, "rgba(9,132,227,0.02)");
+
+        const gradientCurr = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradientCurr.addColorStop(0, "rgba(0,184,148,0.35)");
+        gradientCurr.addColorStop(1, "rgba(0,184,148,0.02)");
+
+        const labels = [];
+        const currentPrices = [];
+        const predictedPrices = [];
+        const highPrices = [];
+        const lowPrices = [];
+
+        const totalSteps = prediction.days * 24 + prediction.hours;
+        const isDaily =
+          (prediction.mode && prediction.mode.toLowerCase() === "daily") ||
+          (prediction.days && prediction.days > 0);
+        const unitLabel = isDaily ? "Day" : "Hour";
+        const series =
+          Array.isArray(prediction.predicted_series) &&
+          prediction.predicted_series.length > 0
+            ? prediction.predicted_series
+            : Array(Math.max(1, totalSteps)).fill(prediction.predicted);
+
+        for (let i = 0; i < series.length; i++) {
+          labels.push(`${unitLabel} ${i + 1}`);
+          currentPrices.push(prediction.current);
+          predictedPrices.push(series[i]);
+          highPrices.push(prediction.high);
+          lowPrices.push(prediction.low);
+        }
+
+        if (window.predictionChartInstance)
+          window.predictionChartInstance.destroy();
+
+        const shadowLinePlugin = {
+          id: "shadowLine",
+          beforeDatasetsDraw(chart) {
+            const { ctx } = chart;
+            ctx.save();
+            ctx.shadowColor = isDark ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.25)";
+            ctx.shadowBlur = 12;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 6;
+          },
+          afterDatasetsDraw(chart) {
+            chart.ctx.restore();
+          },
+        };
+
+        window.predictionChartInstance = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Current Price",
+                data: currentPrices,
+                borderColor: "#00b894",
+                backgroundColor: gradientCurr,
+                fill: true,
+                pointRadius: 0,
+                borderWidth: 3,
+                tension: 0.35,
+              },
+              {
+                label: "Predicted Price",
+                data: predictedPrices,
+                borderColor: "#0984e3",
+                backgroundColor: gradientPred,
+                fill: true,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                borderWidth: 3,
+                tension: 0.35,
+              },
+              {
+                label: "High Price",
+                data: highPrices,
+                borderColor: "#fdcb6e",
+                borderDash: [5, 5],
+                fill: false,
+                pointRadius: 0,
+                borderWidth: 2,
+                tension: 0.2,
+              },
+              {
+                label: "Low Price",
+                data: lowPrices,
+                borderColor: "#d63031",
+                borderDash: [5, 5],
+                fill: false,
+                pointRadius: 0,
+                borderWidth: 2,
+                tension: 0.2,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            animation: { duration: 1200, easing: "easeOutQuart" },
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  color: axisTickColor,
+                  boxWidth: 14,
+                  boxHeight: 4,
+                  usePointStyle: true,
+                },
+              },
+              tooltip: {
+                backgroundColor: isDark
+                  ? "rgba(0,0,0,0.8)"
+                  : "rgba(255,255,255,0.95)",
+                titleColor: axisTickColor,
+                bodyColor: axisTickColor,
+                borderWidth: 1,
+                borderColor: gridColor,
+                callbacks: {
+                  label(ctx) {
+                    const label = ctx.dataset.label || "";
+                    const val = ctx.parsed.y;
+                    const formatted = `₹${Number(val).toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}`;
+                    return `${label}: ${formatted}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                grid: { color: gridColor },
+                ticks: { color: axisTickColor },
+              },
+              y: {
+                grid: { color: gridColor },
+                ticks: {
+                  color: axisTickColor,
+                  callback: (v) => `₹${Number(v).toLocaleString("en-IN")}`,
+                },
+              },
+            },
+          },
+          plugins: [shadowLinePlugin],
+        });
+      }
+    </script>
+  </body>
+</html>

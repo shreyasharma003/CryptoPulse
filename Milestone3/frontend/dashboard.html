@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - CryptoPulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dark-mode.css" />
+  </head>
+  <body class="dark-theme">
+    <header class="header">
+      <div class="container">
+        <div class="nav-brand">
+          <a href="dashboard.html" class="logo-link">
+            <h1 class="logo">CryptoPulse</h1>
+            <span class="tagline">tracks the heartbeat of the market</span>
+          </a>
+        </div>
+        <nav class="nav-menu">
+          <span class="user-welcome" id="userWelcome">Welcome, User!</span>
+          <button
+            class="theme-toggle"
+            id="themeToggle"
+            aria-label="Toggle theme"
+          >
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="logout-btn" id="logoutBtn">Logout</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main dashboard-main">
+      <div class="container">
+        <div class="dashboard-header">
+          <h2 class="dashboard-title">Cryptocurrency Price Prediction</h2>
+          <p class="dashboard-subtitle">
+            Select a cryptocurrency and prediction timeframe to get AI-powered
+            market insights
+          </p>
+        </div>
+
+        <form class="prediction-form" id="predictionForm">
+          <!-- Cryptocurrency Selection -->
+          <div class="form-section">
+            <h3 class="section-title">Select Cryptocurrency</h3>
+            <div class="coins-grid">
+              <div class="coin-card" data-coin="BTC">
+                <div class="coin-icon">₿</div>
+                <div class="coin-info">
+                  <span class="coin-name">Bitcoin</span>
+                  <span class="coin-symbol">BTC</span>
+                </div>
+                <!-- <div class="coin-price">₹35,89,250.00</div> -->
+              </div>
+              <div class="coin-card" data-coin="ETH">
+                <div class="coin-icon">Ξ</div>
+                <div class="coin-info">
+                  <span class="coin-name">Ethereum</span>
+                  <span class="coin-symbol">ETH</span>
+                </div>
+                <!-- <div class="coin-price">₹2,22,680.50</div> -->
+              </div>
+              <div class="coin-card" data-coin="BNB">
+                <div class="coin-icon">◆</div>
+                <div class="coin-info">
+                  <span class="coin-name">Binance Coin</span>
+                  <span class="coin-symbol">BNB</span>
+                </div>
+                <!-- <div class="coin-price">₹26,215.75</div> -->
+              </div>
+              <div class="coin-card" data-coin="DOGE">
+                <div class="coin-icon">Ð</div>
+                <div class="coin-info">
+                  <span class="coin-name">Dogecoin</span>
+                  <span class="coin-symbol">DOGE</span>
+                </div>
+                <!-- <div class="coin-price">₹6.64</div> -->
+              </div>
+              <div class="coin-card" data-coin="DOT">
+                <div class="coin-icon">●</div>
+                <div class="coin-info">
+                  <span class="coin-name">Polkadot</span>
+                  <span class="coin-symbol">DOT</span>
+                </div>
+                <!-- <div class="coin-price">₹602.25</div> -->
+              </div>
+              <div class="coin-card" data-coin="SOL">
+                <div class="coin-icon">◉</div>
+                <div class="coin-info">
+                  <span class="coin-name">Solana</span>
+                  <span class="coin-symbol">SOL</span>
+                </div>
+                <!-- <div class="coin-price">₹8,176.50</div> -->
+              </div>
+              <div class="coin-card" data-coin="XRP">
+                <div class="coin-icon">✕</div>
+                <div class="coin-info">
+                  <span class="coin-name">Ripple</span>
+                  <span class="coin-symbol">XRP</span>
+                </div>
+                <!-- <div class="coin-price">₹43.16</div> -->
+              </div>
+              <div class="coin-card" data-coin="TRX">
+                <div class="coin-icon">▲</div>
+                <div class="coin-info">
+                  <span class="coin-name">Tron</span>
+                  <span class="coin-symbol">TRX</span>
+                </div>
+                <!-- <div class="coin-price">₹9.13</div> -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeframe Selection -->
+          <div class="form-section">
+            <h3 class="section-title">Prediction Timeframe</h3>
+            <div class="duration-selector">
+              <div class="timeframe-type">
+                <label class="radio-option">
+                  <input
+                    type="radio"
+                    name="timeframeType"
+                    value="daily"
+                    checked
+                  />
+                  <span class="radio-label">Daily Basis</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="timeframeType" value="hourly" />
+                  <span class="radio-label">Hourly Basis</span>
+                </label>
+              </div>
+
+              <div class="duration-group" id="dailyGroup">
+                <label class="duration-label">Days</label>
+                <select class="duration-select" id="daysSelect" name="days">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5" selected>5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                </select>
+              </div>
+
+              <div
+                class="duration-group"
+                id="hourlyGroup"
+                style="display: none"
+              >
+                <label class="duration-label">Hours</label>
+                <select class="duration-select" id="hoursSelect" name="hours">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="13">13</option>
+                  <option value="14">14</option>
+                  <option value="15">15</option>
+                  <option value="16">16</option>
+                  <option value="17">17</option>
+                  <option value="18">18</option>
+                  <option value="19">19</option>
+                  <option value="20">20</option>
+                  <option value="21">21</option>
+                  <option value="22">22</option>
+                  <option value="23" selected>23</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-predict" disabled>
+              <span class="btn-text">Predict Now</span>
+              <span class="btn-icon">🚀</span>
+            </button>
+          </div>
+          <!-- Prediction History Button moved below Predict Now -->
+          <div
+            class="history-actions"
+            style="
+              margin: 1rem 0;
+              display: flex;
+              gap: 0.75rem;
+              align-items: center;
+              justify-content: center;
+              width: 100%;
+            "
+          >
+            <button type="button" class="btn btn-secondary" id="loadHistoryBtn">
+              View Prediction History
+            </button>
+            <span
+              id="historyStatus"
+              style="font-size: 0.9rem; opacity: 0.8"
+            ></span>
+          </div>
+        </form>
+
+        <!-- Prediction History Section -->
+        <section id="predictionHistory" style="display: none; margin-top: 2rem">
+          <h3 class="section-title">Prediction History</h3>
+          <div class="table-responsive" style="overflow-x: auto">
+            <table
+              class="history-table"
+              style="width: 100%; border-collapse: collapse"
+            >
+              <thead>
+                <tr>
+                  <th style="text-align: left; padding: 8px">Time</th>
+                  <th style="text-align: left; padding: 8px">Symbol</th>
+                  <th style="text-align: left; padding: 8px">Mode</th>
+                  <th style="text-align: right; padding: 8px">Current (₹)</th>
+                  <th style="text-align: right; padding: 8px">Predicted (₹)</th>
+                  <th style="text-align: right; padding: 8px">High (₹)</th>
+                  <th style="text-align: right; padding: 8px">Low (₹)</th>
+                  <th style="text-align: left; padding: 8px">Direction</th>
+                  <th style="text-align: right; padding: 8px">Confidence</th>
+                </tr>
+              </thead>
+              <tbody id="historyBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Loading Overlay -->
+        <div
+          id="loadingOverlay"
+          style="
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(2px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <div style="text-align: center; color: #fff">
+            <div
+              style="
+                width: 52px;
+                height: 52px;
+                border: 4px solid rgba(255, 255, 255, 0.3);
+                border-top-color: #8b5cf6;
+                border-radius: 50%;
+                margin: 0 auto 12px;
+                animation: spin 1s linear infinite;
+              "
+            ></div>
+            <div style="font-weight: 600">Generating prediction…</div>
+            <div style="opacity: 0.85; font-size: 0.9rem; margin-top: 4px">
+              This can take a few minutes
+            </div>
+          </div>
+        </div>
+        <style>
+          @keyframes spin {
+            from {
+              transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+            }
+          }
+        </style>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        fetch("http://127.0.0.1:5000/user", { credentials: "include" })
+          .then((res) => {
+            if (!res.ok) throw new Error("Not logged in");
+            return res.json();
+          })
+          .then((user) => {
+            document.getElementById(
+              "userWelcome"
+            ).textContent = `Welcome, ${user.fullName}!`;
+
+            const coinCards = document.querySelectorAll(".coin-card");
+            let selectedCoin = null;
+            const predictBtn = document.querySelector(".btn-predict");
+
+            coinCards.forEach((card) => {
+              card.addEventListener("click", () => {
+                coinCards.forEach((c) => c.classList.remove("selected"));
+                card.classList.add("selected");
+                selectedCoin = card.dataset.coin;
+                updatePredictButton();
+              });
+            });
+
+            const daysSelect = document.getElementById("daysSelect");
+            const hoursSelect = document.getElementById("hoursSelect");
+            const dailyGroup = document.getElementById("dailyGroup");
+            const hourlyGroup = document.getElementById("hourlyGroup");
+
+            document
+              .querySelectorAll('input[name="timeframeType"]')
+              .forEach((radio) => {
+                radio.addEventListener("change", () => {
+                  if (radio.value === "daily") {
+                    dailyGroup.style.display = "block";
+                    hourlyGroup.style.display = "none";
+                  } else {
+                    dailyGroup.style.display = "none";
+                    hourlyGroup.style.display = "block";
+                  }
+                  updatePredictButton();
+                });
+              });
+
+            function updatePredictButton() {
+              const timeframe = document.querySelector(
+                'input[name="timeframeType"]:checked'
+              ).value;
+              const hasTime =
+                timeframe === "daily"
+                  ? parseInt(daysSelect.value) > 0
+                  : parseInt(hoursSelect.value) > 0;
+              predictBtn.disabled = !selectedCoin || !hasTime;
+            }
+
+            const loadingOverlay = document.getElementById("loadingOverlay");
+            document
+              .getElementById("predictionForm")
+              .addEventListener("submit", async (e) => {
+                e.preventDefault();
+                if (!selectedCoin) return alert("Select a coin first");
+
+                const timeframe = document.querySelector(
+                  'input[name="timeframeType"]:checked'
+                ).value;
+                const value =
+                  timeframe === "daily"
+                    ? parseInt(daysSelect.value)
+                    : parseInt(hoursSelect.value);
+
+                try {
+                  // Show loading state
+                  loadingOverlay.style.display = "flex";
+                  predictBtn.disabled = true;
+                  document.body.style.pointerEvents = "none";
+                  const res = await fetch("http://127.0.0.1:5000/predict", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({
+                      symbol: selectedCoin,
+                      mode: timeframe,
+                      value,
+                    }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok)
+                    throw new Error(data.error || "Prediction failed");
+
+                  window.location.href = "output.html";
+                } catch (err) {
+                  console.error(err);
+                  alert("Prediction failed");
+                } finally {
+                  // Hide loading state (in case of error)
+                  loadingOverlay.style.display = "none";
+                  predictBtn.disabled = false;
+                  document.body.style.pointerEvents = "";
+                }
+              });
+
+            updatePredictButton();
+
+            document
+              .getElementById("logoutBtn")
+              .addEventListener("click", () => {
+                fetch("http://127.0.0.1:5000/logout", {
+                  method: "POST",
+                  credentials: "include",
+                }).then(() => (window.location.href = "index.html"));
+              });
+
+            // =====================
+            // Prediction History
+            // =====================
+            const loadHistoryBtn = document.getElementById("loadHistoryBtn");
+            const historySection = document.getElementById("predictionHistory");
+            const historyBody = document.getElementById("historyBody");
+            const historyStatus = document.getElementById("historyStatus");
+
+            function formatINR(n) {
+              return `₹${Number(n).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`;
+            }
+
+            async function getUsdInrRate() {
+              try {
+                const fxRes = await fetch(
+                  "https://open.er-api.com/v6/latest/USD"
+                );
+                const fxJson = await fxRes.json();
+                const rate = fxJson?.rates?.INR;
+                return typeof rate === "number" && isFinite(rate) ? rate : 83.0;
+              } catch (_) {
+                return 83.0;
+              }
+            }
+
+            async function loadHistory() {
+              try {
+                historyStatus.textContent = "Loading history...";
+                const [res, usdInr] = await Promise.all([
+                  fetch("http://127.0.0.1:5000/predictions", {
+                    credentials: "include",
+                  }),
+                  getUsdInrRate(),
+                ]);
+                const data = await res.json();
+                if (!res.ok)
+                  throw new Error(data.error || "Failed to load history");
+
+                historyBody.innerHTML = "";
+                if (!Array.isArray(data) || data.length === 0) {
+                  historyBody.innerHTML =
+                    '<tr><td colspan="9" style="padding:8px; opacity:0.8;">No predictions yet.</td></tr>';
+                } else {
+                  data.forEach((p) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                            <td style="padding:8px;">${new Date(
+                              p.timestamp
+                            ).toLocaleString()}</td>
+                            <td style="padding:8px;">${p.symbol}</td>
+                            <td style="padding:8px; text-transform:capitalize;">${
+                              p.mode
+                            }</td>
+                            <td style="padding:8px; text-align:right;">${formatINR(
+                              p.current_price * usdInr
+                            )}</td>
+                            <td style="padding:8px; text-align:right;">${formatINR(
+                              p.predicted_price * usdInr
+                            )}</td>
+                            <td style="padding:8px; text-align:right;">${formatINR(
+                              p.high * usdInr
+                            )}</td>
+                            <td style="padding:8px; text-align:right;">${formatINR(
+                              p.low * usdInr
+                            )}</td>
+                            <td style="padding:8px;">${p.direction}</td>
+                            <td style="padding:8px; text-align:right;">${(
+                              p.confidence ?? 0
+                            ).toFixed(0)}%</td>
+                        `;
+                    historyBody.appendChild(tr);
+                  });
+                }
+                historySection.style.display = "block";
+                historyStatus.textContent = `Loaded ${
+                  Array.isArray(data) ? data.length : 0
+                } record(s)`;
+              } catch (err) {
+                console.error(err);
+                historyStatus.textContent =
+                  err.message || "Failed to load history";
+              }
+            }
+
+            loadHistoryBtn.addEventListener("click", loadHistory);
+          })
+          .catch(() => {
+            alert("Please log in");
+            window.location.href = "login.html";
+          });
+      });
+    </script>
+  </body>
+</html>

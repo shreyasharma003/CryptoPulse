@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - CryptoPulse</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@500;700;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dark-mode.css" />
+</head>
+<body class="dark-theme">
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="nav-brand">
+        <a href="index.html" class="logo-link">
+          <h1 class="logo">CryptoPulse</h1>
+          <span class="tagline">Tracks the heartbeat of the market</span>
+        </a>
+      </div>
+      <nav class="nav-menu">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main auth-main">
+    <div class="container auth-wrapper">
+      <!-- Login Card -->
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2 class="auth-title">Welcome Back 👋</h2>
+          <p class="auth-subtitle">Sign in to continue to CryptoPulse</p>
+        </div>
+
+        <!-- Message Box -->
+        <div id="messageBox" class="message-box"></div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form">
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div class="form-group password-group">
+            <label for="password" class="form-label">Password</label>
+            <div class="password-wrapper">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-input"
+                placeholder="Enter your password"
+                required
+              />
+              <span id="togglePassword" class="toggle-password">👁</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full">
+            Sign In
+          </button>
+        </form>
+
+        <!-- Footer -->
+        <div class="auth-footer">
+          <p class="auth-link-text">
+            Don't have an account?
+            <a href="signup.html" class="auth-link">Sign up here</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Visual Section -->
+      <div class="auth-visual">
+        <div class="visual-content">
+          <h3 class="visual-title">📊 Track Market Trends</h3>
+          <p class="visual-description">
+            Get real-time insights and AI-powered predictions for your favorite cryptocurrencies.
+          </p>
+          <div class="visual-stats">
+            <div class="stat-item">
+              <span class="stat-number">8+</span>
+              <span class="stat-label">Cryptocurrencies</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">24/7</span>
+              <span class="stat-label">Market Analysis</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">AI</span>
+              <span class="stat-label">Powered Predictions</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>

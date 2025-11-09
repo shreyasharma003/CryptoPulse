@@ -1,0 +1,10 @@
+flask
+flask-sqlalchemy
+flask-cors
+pymysql
+numpy
+pandas
+requests
+tensorflow
+sklearn
+cryptography
